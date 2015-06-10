@@ -22,10 +22,12 @@ PODS:
     - FBSDKCoreKit
   - FBSDKShareKit (4.2.0):
     - FBSDKCoreKit
+  - GooglePlacesAutocomplete (0.2.1)
   - MaterialKit (0.3.5)
   - ObjectMapper (0.12)
   - PureLayout (2.0.6)
   - Socket.IO-Client-Swift (2.3.2)
+  - Suitchi (1.0.0)
   - SwiftyJSON (2.2.0)
 
 DEPENDENCIES:
@@ -34,10 +36,12 @@ DEPENDENCIES:
   - FBSDKCoreKit
   - FBSDKLoginKit
   - FBSDKShareKit
+  - GooglePlacesAutocomplete
   - MaterialKit
   - ObjectMapper
   - PureLayout
   - Socket.IO-Client-Swift
+  - Suitchi
   - SwiftyJSON
 
 SPEC CHECKSUMS:
@@ -48,10 +52,12 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: 84b3616a361801f190e43a9909caead7bb6087c7
   FBSDKLoginKit: 57e37106af12c9e264e473dcb75d7decdbb07fe4
   FBSDKShareKit: 931746fdf8fb95efd6e12310ec14b2b3295e2aec
+  GooglePlacesAutocomplete: 1f1a59897cfd16f1e7ff191a82ee256eb12abfa5
   MaterialKit: 6f1e9382f89593df768bc0c31ded9952a6d8ad46
   ObjectMapper: ef4a369cbab75546029ceb7e8155772b5f8e8841
   PureLayout: f25f0bb904d5ccfe6e31da3cb869185259f02e0d
   Socket.IO-Client-Swift: 8b5de9b5042c26e9ae9d8a6b23d108f07319cd60
+  Suitchi: a1924fb2b750640e5bc449a1d151eb7e558481e5
   SwiftyJSON: 0b3e6c07af17ff745e77e8e9984097b55c956e5c
 
 COCOAPODS: 0.37.2

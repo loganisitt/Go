@@ -10,6 +10,8 @@ pod 'FBSDKCoreKit'
 pod 'FBSDKLoginKit'
 pod 'FBSDKShareKit'
 
+pod 'GooglePlacesAutocomplete'
+
 pod 'MaterialKit'
 
 pod 'ObjectMapper'
@@ -17,6 +19,8 @@ pod 'ObjectMapper'
 pod 'PureLayout'
 
 pod 'Socket.IO-Client-Swift'
+
+pod 'Suitchi'
 
 pod 'SwiftyJSON'
 

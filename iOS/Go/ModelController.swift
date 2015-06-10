@@ -22,7 +22,6 @@ class ModelController: NSObject, UIPageViewControllerDataSource {
 
     var pageData = NSArray()
 
-
     override init() {
         super.init()
         // Create the data model.

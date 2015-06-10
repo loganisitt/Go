@@ -127,7 +127,6 @@ class SigninViewController: UIViewController {
         emailField.floatingPlaceholderEnabled = true
         emailField.placeholder = "Email"
         emailField.rippleLayerColor = UIColor.grayColor()
-        emailField.tintColor = UIColor.MKColor.Blue
         emailField.backgroundColor = UIColor(hex: 0xEEEEEE)
         emailField.padding = padding
         emailField.layer.cornerRadius = 0
@@ -141,7 +140,6 @@ class SigninViewController: UIViewController {
         passwordField.floatingPlaceholderEnabled = true
         passwordField.placeholder = "Password"
         passwordField.rippleLayerColor = UIColor.grayColor()
-        passwordField.tintColor = UIColor.MKColor.Blue
         passwordField.backgroundColor = UIColor(hex: 0xEEEEEE)
         passwordField.padding = padding
         passwordField.layer.cornerRadius = 0
