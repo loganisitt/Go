@@ -24,3 +24,5 @@ pod 'Suitchi'
 
 pod 'SwiftyJSON'
 
+pod 'TTRangeSlider'
+

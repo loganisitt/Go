@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CustomSwitch: UIView {
+class CustomSwitch: UIControl {
     
     var backgroundView: UIView!
     
@@ -23,7 +23,31 @@ class CustomSwitch: UIView {
     let whiteColor = UIColor.whiteColor()
     let darkGreyColor = UIColor(red:0.22, green:0.22, blue:0.22, alpha:1)
     
-    var isOff: Bool!
+    var isOff: Bool = true
+    
+    var offText: String = "Off" {
+        didSet {
+            if offLabel != nil {
+                offLabel.text = offText
+            }
+        }
+    }
+    
+    var onText: String = "On" {
+        didSet {
+            if onLabel != nil {
+                onLabel.text = onText
+            }
+        }
+    }
+    
+    var centerText: String = "or" {
+        didSet {
+            if centerCircleLabel != nil {
+                centerCircleLabel.text = centerText
+            }
+        }
+    }
     
     override func drawRect(rect: CGRect) {
         
@@ -62,7 +86,7 @@ class CustomSwitch: UIView {
         onLabel = UILabel()
         onLabel.frame = CGRectMake(0.0, (self.bounds.size.height / 2) - 25.0, self.bounds.size.width / 2, 50.0)
         onLabel.alpha = 1.0
-        onLabel.text = "Public"
+        onLabel.text = onText
         onLabel.textAlignment = NSTextAlignment.Center
         onLabel.textColor = whiteColor
         onLabel.font = UIFont(name: "AvenirNext-Demibold", size: 15.0)
@@ -71,7 +95,7 @@ class CustomSwitch: UIView {
         offLabel = UILabel()
         offLabel.frame = CGRectMake(0.0, (self.bounds.size.height / 2) - 25.0, self.bounds.size.width / 2, 50.0)
         offLabel.alpha = 1.0
-        offLabel.text = "Private"
+        offLabel.text = offText
         offLabel.textAlignment = NSTextAlignment.Center
         offLabel.textColor = darkGreyColor
         offLabel.font = UIFont(name: "AvenirNext-Demibold", size: 15.0)
@@ -81,7 +105,7 @@ class CustomSwitch: UIView {
         
         centerCircleLabel = UILabel()
         centerCircleLabel.frame = CGRectMake((self.bounds.size.width / 2) - 12.0, (self.bounds.size.height / 2) - 12.0, 24.0, 24.0)
-        centerCircleLabel.text = "Privacy"
+        centerCircleLabel.text = centerText
         centerCircleLabel.sizeToFit()
         centerCircleLabel.frame = CGRectMake((self.bounds.size.width / 2) - centerCircleLabel.bounds.width / 2, (self.bounds.size.height / 2) - centerCircleLabel.bounds.height / 2, centerCircleLabel.bounds.size.width, centerCircleLabel.bounds.size.height)
         
@@ -94,7 +118,6 @@ class CustomSwitch: UIView {
         self.addSubview(centerCircleLabel)
         
         isOff = false
-        
     }
     
     func toggleSwitch(sender: UIButton) {
@@ -106,6 +129,9 @@ class CustomSwitch: UIView {
         if(on == isOff){
             return
         }
+        
+        sendActionsForControlEvents(.ValueChanged)
+        
         isOff = on
         
         UIView.animateWithDuration(0.4,
