@@ -10,7 +10,11 @@ pod 'FBSDKCoreKit'
 pod 'FBSDKLoginKit'
 pod 'FBSDKShareKit'
 
+pod 'FontAwesomeKit'
+
 pod 'GooglePlacesAutocomplete'
+
+pod 'HanekeSwift'
 
 pod 'MaterialKit'
 
@@ -20,9 +24,6 @@ pod 'PureLayout'
 
 pod 'Socket.IO-Client-Swift'
 
-pod 'Suitchi'
-
 pod 'SwiftyJSON'
 
 pod 'TTRangeSlider'
-

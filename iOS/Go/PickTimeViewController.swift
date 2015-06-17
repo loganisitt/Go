@@ -8,9 +8,14 @@
 
 import UIKit
 
-class PickTimeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+import MaterialKit
 
-    var titleLabel: UILabel!
+class PickTimeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    let shadowOffset = CGSize(width: -1, height: 1)
+
+    var titleLabel: GOLabel!
+    var subtitleLabel: GOLabel!
     var dateScroller: DateScroller!
     var tableView: UITableView!
     
@@ -24,14 +29,13 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
     // MARK: - Views
     func setupViews() {
         
-        titleLabel = UILabel()
+        titleLabel = GOLabel()
         titleLabel.text = self.title
-        titleLabel.textColor = UIColor.whiteColor()
-        titleLabel.textAlignment = .Center
-        
         titleLabel.font = UIFont.boldSystemFontOfSize(20)
         
-        titleLabel.backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
+        subtitleLabel = GOLabel()
+        subtitleLabel.text = "Choose a time and date"
+        subtitleLabel.font = UIFont.boldSystemFontOfSize(12)
         
         dateScroller = DateScroller()
         
@@ -48,20 +52,30 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
         
         tableView.tableFooterView = UIView(frame: .zeroRect)
         
-        view.addSubview(titleLabel)
+        tableView.backgroundColor = UIColor.go_main_color()
+        tableView.separatorStyle = .None
+
         view.addSubview(dateScroller)
         view.addSubview(tableView)
+        view.addSubview(titleLabel)
+        view.addSubview(subtitleLabel)
     }
     
     // MARK: - Layout
     
     func layoutViews() {
+        
         titleLabel.autoPinToTopLayoutGuideOfViewController(self, withInset: 0)
         titleLabel.autoPinEdgeToSuperviewEdge(.Left)
         titleLabel.autoPinEdgeToSuperviewEdge(.Right)
         titleLabel.autoSetDimension(.Height, toSize: 50)
         
-        dateScroller.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 0)
+        subtitleLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: -8)
+        subtitleLabel.autoPinEdgeToSuperviewEdge(.Left)
+        subtitleLabel.autoPinEdgeToSuperviewEdge(.Right)
+        subtitleLabel.autoSetDimension(.Height, toSize: 20)
+        
+        dateScroller.autoPinEdge(.Top, toEdge: .Bottom, ofView: subtitleLabel, withOffset: 0)
         dateScroller.autoPinEdgeToSuperviewEdge(.Left)
         dateScroller.autoPinEdgeToSuperviewEdge(.Right)
         dateScroller.autoSetDimension(.Height, toSize: (view.bounds.width - 20)/7.0)
@@ -90,10 +104,18 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
         let ampm = indexPath.section > 12 ? "PM" : "AM"
         
         cell.textLabel?.text = NSString(format: "%d:%02d %@", hour, minute, ampm) as String
-        cell.textLabel?.textColor = UIColor.blackColor()
+        cell.textLabel?.textColor = UIColor.go_white()
         cell.textLabel?.textAlignment = .Center
         
-        cell.textLabel?.font = UIFont.boldSystemFontOfSize(18)
+        cell.textLabel?.font = UIFont.boldSystemFontOfSize(24)
+        
+        cell.textLabel?.layer.cornerRadius = 0
+        cell.textLabel?.layer.shadowOpacity = 0.55
+        cell.textLabel?.layer.shadowRadius = 0
+        cell.textLabel?.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        cell.textLabel?.layer.shadowOffset = CGSize(width: -1, height: 1)
+        
+        cell.backgroundColor = UIColor.clearColor()
         
         return cell
     }
@@ -101,6 +123,6 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
     // MARK: - UITableViewDelegate
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-//        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 }

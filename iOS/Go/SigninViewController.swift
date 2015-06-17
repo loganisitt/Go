@@ -2,31 +2,30 @@
 //  SigninViewController.swift
 //  Go
 //
-//  Created by Logan Isitt on 6/3/15.
+//  Created by Logan Isitt on 5/4/15.
 //  Copyright (c) 2015 Logan Isitt. All rights reserved.
 //
 
 import UIKit
 
 import PureLayout
+import MaterialKit
 
 import FBSDKCoreKit
 import FBSDKLoginKit
 
-import MaterialKit
-
-class SigninViewController: UIViewController {
+class SigninViewController: UIViewController, ClientDelegate {
     
-    var appName: MKLabel!
+    var appName: GOLabel!
     
-    var emailField: MKTextField!
-    var passwordField: MKTextField!
+    var emailField: GOTextField!
+    var passwordField: GOTextField!
     var forgotButton: MKButton!
-   
+    
     var emailLoginButton: SNButton!
     var facebookLoginButton: SNButton!
     var twitterLoginButton: SNButton!
-
+    
     var exitButton: MKButton!
     
     // MARK: - General
@@ -34,16 +33,18 @@ class SigninViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
+        navigationController?.navigationBar.hidden = true
+
+        view.backgroundColor = UIColor.go_main_color()
+        
+        Client.sharedInstance.delegate = self
         
         if (FBSDKAccessToken.currentAccessToken() != nil) {
+            // User is already logged in, do work such as go to next view controller.
+            Client.sharedInstance.signinWithFacebook(FBSDKAccessToken.currentAccessToken().tokenString)
         }
         
-        navigationController?.navigationBar.hidden = true
-        
-        addBackground()
         setupViews()
-        
         layoutSubviews()
         
         // Gestures
@@ -59,12 +60,32 @@ class SigninViewController: UIViewController {
     
     // MARK: - Actions
     
-    func exitButtonAction() {
-        navigationController?.popViewControllerAnimated(true)
+    func facebookLoginButtonAction() {
+        
+        let login = FBSDKLoginManager()
+        login.logInWithReadPermissions(["email"], handler: { (result :FBSDKLoginManagerLoginResult!, error: NSError!) -> Void in
+            println("User Logged In")
+            
+            if ((error) != nil){
+                // Process error
+            } else if result.isCancelled {
+                // Handle cancellations
+            } else {
+                
+                Client.sharedInstance.signinWithFacebook(FBSDKAccessToken.currentAccessToken().tokenString)
+                
+                // If you ask for multiple permissions at once, you
+                // should check if specific permissions missing
+                if result.grantedPermissions.contains("email")
+                {
+                    // Do work
+                }
+            }
+        })
     }
     
-    func facebookButtonAction() {
-        performSegueWithIdentifier("gotoDash", sender: self)
+    func exitButtonAction() {
+        navigationController?.popViewControllerAnimated(true)
     }
     
     func resignFirstResponders() {
@@ -78,19 +99,7 @@ class SigninViewController: UIViewController {
     
     // MARK: - Views
     
-    func addBackground() {
-        
-        var backgroundView = UIImageView(image: UIImage(named: "background"))
-        view.addSubview(backgroundView)
-        
-        backgroundView.contentMode = .ScaleAspectFill
-        
-        backgroundView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
-    }
-    
     func setupViews() {
-        
-        let padding = CGSizeMake(21, 21)
         
         exitButton = MKButton()
         exitButton.addTarget(self, action: "exitButtonAction", forControlEvents: .TouchUpInside)
@@ -107,55 +116,37 @@ class SigninViewController: UIViewController {
         exitButton.layer.cornerRadius = 0
         exitButton.layer.shadowOpacity = 0.55
         exitButton.layer.shadowRadius = 0
-        exitButton.layer.shadowColor = UIColor.grayColor().CGColor
-        exitButton.layer.shadowOffset = CGSize(width: 0, height: 2.5)
+        exitButton.layer.shadowColor = UIColor.blackColor().CGColor
+        exitButton.layer.shadowOffset = CGSize(width: -1, height: 1)
         
-        appName = MKLabel()
+        appName = GOLabel()
         appName.text = "Go"
-        appName.textColor = UIColor.whiteColor()
-        appName.textAlignment = .Center
         appName.font = UIFont.boldSystemFontOfSize(200)
-        appName.backgroundLayerColor = UIColor.clearColor()
         
-        appName.layer.shadowOpacity = 1
-        appName.layer.shadowColor = UIColor.grayColor().CGColor
-        appName.layer.shadowOffset = CGSize(width: 2.5, height: 2.5)
-        
-        emailField = MKTextField()
-        
-        emailField.layer.borderColor = UIColor.clearColor().CGColor
-        emailField.floatingPlaceholderEnabled = true
+        emailField = GOTextField()
         emailField.placeholder = "Email"
-        emailField.rippleLayerColor = UIColor.grayColor()
-        emailField.backgroundColor = UIColor(hex: 0xEEEEEE)
-        emailField.padding = padding
-        emailField.layer.cornerRadius = 0
-        emailField.bottomBorderEnabled = true
-        emailField.bottomBorderHighlightWidth = emailField.bottomBorderWidth
-        emailField.tintColor = emailField.bottomBorderColor
         
-        passwordField = MKTextField()
-        
-        passwordField.layer.borderColor = UIColor.clearColor().CGColor
-        passwordField.floatingPlaceholderEnabled = true
+        passwordField = GOTextField()
         passwordField.placeholder = "Password"
-        passwordField.rippleLayerColor = UIColor.grayColor()
-        passwordField.backgroundColor = UIColor(hex: 0xEEEEEE)
-        passwordField.padding = padding
-        passwordField.layer.cornerRadius = 0
-
+        
         forgotButton = MKButton()
         forgotButton.titleLabel?.font = UIFont.systemFontOfSize(UIFont.smallSystemFontSize())
         forgotButton.setTitle("Forgot Password?", forState: .Normal)
         forgotButton.clipsToBounds = true
         forgotButton.backgroundAniEnabled = false
-    
+        
+        forgotButton.layer.cornerRadius = 0
+        forgotButton.layer.shadowOpacity = 0.55
+        forgotButton.layer.shadowRadius = 0
+        forgotButton.layer.shadowColor = UIColor.blackColor().CGColor
+        forgotButton.layer.shadowOffset = CGSize(width: -0.5, height: 0.5)
+        
         emailLoginButton = SNButton()
         emailLoginButton.network = .Email
         
         facebookLoginButton = SNButton()
         facebookLoginButton.network = .Facebook
-        facebookLoginButton.addTarget(self, action: "facebookButtonAction", forControlEvents: .TouchUpInside)
+        facebookLoginButton.addTarget(self, action: "facebookLoginButtonAction", forControlEvents: .TouchUpInside)
         
         twitterLoginButton = SNButton()
         twitterLoginButton.network = .Twitter
@@ -174,50 +165,53 @@ class SigninViewController: UIViewController {
     
     func layoutSubviews() {
         
-        let buffer = CGFloat(16)
-        let spacing = CGFloat(8)
-        
-        let btnHeight = CGFloat(50)
-        
-        let z = CGFloat(0)
-        
         exitButton.autoPinToTopLayoutGuideOfViewController(self, withInset: 0)
         exitButton.autoPinEdgeToSuperviewEdge(.Left, withInset: 0)
-        exitButton.autoSetDimensionsToSize(CGSize(width: btnHeight, height: btnHeight))
+        exitButton.autoSetDimensionsToSize(CGSize(width: 50, height: 50))
         
-        appName.autoPinEdgeToSuperviewEdge(.Left, withInset: buffer)
-        appName.autoPinEdgeToSuperviewEdge(.Right, withInset: buffer)
-
+        appName.autoPinEdgeToSuperviewEdge(.Left, withInset: 16)
+        appName.autoPinEdgeToSuperviewEdge(.Right, withInset: 16)
         
-        emailField.autoPinEdge(.Top, toEdge: .Bottom, ofView: appName, withOffset: z)
-        emailField.autoPinEdgeToSuperviewEdge(ALEdge.Left, withInset: z)
-        emailField.autoPinEdgeToSuperviewEdge(ALEdge.Right, withInset: z)
-        emailField.autoSetDimension(ALDimension.Height, toSize: btnHeight)
+        emailField.autoPinEdge(.Top, toEdge: .Bottom, ofView: appName, withOffset: 0)
+        emailField.autoPinEdgeToSuperviewEdge(ALEdge.Left, withInset: 0)
+        emailField.autoPinEdgeToSuperviewEdge(ALEdge.Right, withInset: 0)
+        emailField.autoSetDimension(ALDimension.Height, toSize: 50)
         
-        passwordField.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailField, withOffset: z)
-        passwordField.autoPinEdgeToSuperviewEdge(.Left, withInset: z)
-        passwordField.autoPinEdgeToSuperviewEdge(.Right, withInset: z)
-        passwordField.autoSetDimension(.Height, toSize: btnHeight)
+        passwordField.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailField, withOffset: 0)
+        passwordField.autoPinEdgeToSuperviewEdge(.Left, withInset: 0)
+        passwordField.autoPinEdgeToSuperviewEdge(.Right, withInset: 0)
+        passwordField.autoSetDimension(.Height, toSize: 50)
         
-        forgotButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordField, withOffset: spacing)
-        forgotButton.autoPinEdgeToSuperviewEdge(.Left, withInset: btnHeight)
-        forgotButton.autoPinEdgeToSuperviewEdge(.Right, withInset: btnHeight)
-        forgotButton.autoSetDimension(.Height, toSize: btnHeight/2.0)
+        forgotButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordField, withOffset: 8)
+        forgotButton.autoPinEdgeToSuperviewEdge(.Left, withInset: 50)
+        forgotButton.autoPinEdgeToSuperviewEdge(.Right, withInset: 50)
+        forgotButton.autoSetDimension(.Height, toSize: 50/2.0)
         
-        emailLoginButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: forgotButton, withOffset: spacing)
-        emailLoginButton.autoPinEdgeToSuperviewEdge(.Left, withInset: z)
-        emailLoginButton.autoPinEdgeToSuperviewEdge(.Right, withInset: z)
-        emailLoginButton.autoSetDimension(.Height, toSize: btnHeight)
+        emailLoginButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: forgotButton, withOffset: 8)
+        emailLoginButton.autoPinEdgeToSuperviewEdge(.Left, withInset: 0)
+        emailLoginButton.autoPinEdgeToSuperviewEdge(.Right, withInset: 0)
+        emailLoginButton.autoSetDimension(.Height, toSize: 50)
         
-        facebookLoginButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailLoginButton, withOffset: spacing)
-        facebookLoginButton.autoPinEdgeToSuperviewEdge(.Left, withInset: z)
-        facebookLoginButton.autoPinEdgeToSuperviewEdge(.Right, withInset: z)
-        facebookLoginButton.autoSetDimension(.Height, toSize: btnHeight)
+        facebookLoginButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailLoginButton, withOffset: 8)
+        facebookLoginButton.autoPinEdgeToSuperviewEdge(.Left, withInset: 0)
+        facebookLoginButton.autoPinEdgeToSuperviewEdge(.Right, withInset: 0)
+        facebookLoginButton.autoSetDimension(.Height, toSize: 50)
         
-        twitterLoginButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: facebookLoginButton, withOffset: spacing)
-        twitterLoginButton.autoPinEdgeToSuperviewEdge(.Left, withInset: z)
-        twitterLoginButton.autoPinEdgeToSuperviewEdge(.Right, withInset: z)
-        twitterLoginButton.autoPinToBottomLayoutGuideOfViewController(self, withInset: buffer)
-        twitterLoginButton.autoSetDimension(.Height, toSize: btnHeight)
+        twitterLoginButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: facebookLoginButton, withOffset: 8)
+        twitterLoginButton.autoPinEdgeToSuperviewEdge(.Left, withInset: 0)
+        twitterLoginButton.autoPinEdgeToSuperviewEdge(.Right, withInset: 0)
+        twitterLoginButton.autoPinToBottomLayoutGuideOfViewController(self, withInset: 16)
+        twitterLoginButton.autoSetDimension(.Height, toSize: 50)
+    }
+    
+    // MARK: - ClientDelegate
+    
+    func signInSuccessful() {
+        println("Sign In Successful!")
+        performSegueWithIdentifier("gotoDash", sender: self)
+    }
+    
+    func signInFailed() {
+        println("Sign In Failed!")
     }
 }

@@ -25,16 +25,9 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
         super.viewDidLoad()
         
         navigationItem.title = "Create"
-        
-        let checkmarkImage = UIImage().imageFromText(String.ioniconWithName(.Checkmark), font: UIFont.ioniconOfSize(25), maxWidth: 1000, color:UIColor.whiteColor());
-        
-        let doneButton = UIBarButtonItem(image: checkmarkImage, style: UIBarButtonItemStyle.Plain, target: self, action: "doneButtonAction");
-        navigationItem.rightBarButtonItem = doneButton
-        
-        let backImage = UIImage().imageFromText(String.ioniconWithName(Ionicon.ArrowLeftB), font: UIFont.ioniconOfSize(25), maxWidth: 1000, color:UIColor.whiteColor());
-        
-        let backButton = UIBarButtonItem(image: backImage, style: UIBarButtonItemStyle.Plain, target: self, action: "backButtonAction");
-        navigationItem.leftBarButtonItem = backButton  
+    
+        navigationItem.rightBarButtonItem = UIBarButtonItem.saveButton(target: self, selector: "doneButtonAction")
+        navigationItem.leftBarButtonItem = UIBarButtonItem.backButton(target: self, selector: "backButtonAction")
         
         addPageViewController()
         addProgressView()
@@ -47,25 +40,28 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
         
         pageViewController = UIPageViewController(transitionStyle: .Scroll, navigationOrientation: .Horizontal, options: nil)
         pageViewController!.delegate = self
-        self.pageViewController!.dataSource = self
+        pageViewController!.dataSource = self
+        pageViewController.view.backgroundColor = UIColor.go_main_color()
         
         let startingViewController: UIViewController = viewControllerAtIndex(0)!
         let viewControllers = [startingViewController]
-        self.pageViewController!.setViewControllers(viewControllers, direction: .Forward, animated: false, completion: {done in })
+        pageViewController!.setViewControllers(viewControllers, direction: .Forward, animated: false, completion: {done in })
+        
+        addChildViewController(self.pageViewController!)
+        view.addSubview(self.pageViewController!.view)
+        
+        pageViewController!.didMoveToParentViewController(self)
+        
+        view.gestureRecognizers = self.pageViewController!.gestureRecognizers
         
         UIPageControl.appearance().backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
-        
-        self.addChildViewController(self.pageViewController!)
-        self.view.addSubview(self.pageViewController!.view)
-        
-        self.pageViewController!.didMoveToParentViewController(self)
-        
-        self.view.gestureRecognizers = self.pageViewController!.gestureRecognizers
     }
     
     func addProgressView() {
         
         progressView = UIProgressView()
+        progressView.layer.cornerRadius = 0
+        progressView.progressViewStyle = UIProgressViewStyle.Bar
         progressView.progress = 0.5
         
         view.addSubview(progressView)
@@ -102,9 +98,7 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
         if (count(pageTitles) == 0) || (index >= count(pageTitles)) {
             return nil
         }
-        
-//        pageControl.currentPage = index
-        
+                
         if index == 0 {
             return pickEventViewController
         }
@@ -115,6 +109,9 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
             return pickTimeViewController
         }
         else { // Settings
+            if pickEventViewController.eventType != nil {
+                pickSettingsViewController.eventType = pickEventViewController.eventType
+            }
             return pickSettingsViewController
         }
     }
@@ -205,7 +202,7 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
     
     var pickLocationViewController: PickLocationViewController {
         if _pickLocationViewController == nil {
-            _pickLocationViewController = PickLocationViewController(apiKey: "AIzaSyA4tDpdwIJoQDEFNB_85wpb-BhGT0_3Zjk", placeType: .All)
+            _pickLocationViewController = PickLocationViewController()
             _pickLocationViewController?.title = "Location"
         }
         return _pickLocationViewController!

@@ -16,25 +16,13 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationController?.navigationBar.hidden = false
-        navigationController?.navigationBar.hideHairline()
-        navigationController?.navigationBar.barTintColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
-        navigationController?.navigationBar.tintColor = UIColor.whiteColor()
-        navigationController?.navigationBar.translucent = false
-        navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName: UIFont.boldSystemFontOfSize(25), NSForegroundColorAttributeName: UIColor.whiteColor()]
         
-        navigationController?.toolbar.barTintColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
-        navigationController?.toolbar.tintColor = UIColor.whiteColor()
-        navigationController?.toolbar.translucent = false
+        navigationController?.navigationBar.hidden = false
         
         navigationItem.hidesBackButton = true
         navigationItem.title = "Dash"
         
-        let plusImage = UIImage().imageFromText(String.ioniconWithName(.Plus), font: UIFont.ioniconOfSize(25), maxWidth: 1000, color:UIColor.whiteColor());
-        
-        let createButton = UIBarButtonItem(image: plusImage, style: UIBarButtonItemStyle.Plain, target: self, action: "createButtonAction");
-        navigationItem.rightBarButtonItem = createButton
+        navigationItem.rightBarButtonItem = UIBarButtonItem.addButton(target: self, selector: "createButtonAction")
         
         setupViews()
         layoutViews()
@@ -66,8 +54,8 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         tableView.tableFooterView = UIView(frame: .zeroRect)
         
-        view.addSubview(dateScroller)
         view.addSubview(tableView)
+        view.addSubview(dateScroller)
     }
     
     // MARK: - Layout

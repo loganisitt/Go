@@ -8,30 +8,34 @@
 
 import UIKit
 
+import PureLayout
+import MaterialKit
+
 class DataViewController: UIViewController {
-
-    @IBOutlet weak var dataLabel: UILabel!
-    var dataObject: AnyObject?
-
-
+    
+    let shadowOffset = CGSize(width: -2, height: 2)
+    
+    var featureLabel: GOLabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
+        
+        featureLabel = GOLabel()
+        featureLabel.text = title
+        featureLabel.font = UIFont.boldSystemFontOfSize(50)
+        
+        view.addSubview(featureLabel)
+        
+        featureLabel.autoPinEdgesToSuperviewMargins()
+        
+        view.backgroundColor = UIColor.clearColor()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        if let obj: AnyObject = dataObject {
-            self.dataLabel!.text = obj.description
-        } else {
-            self.dataLabel!.text = ""
-        }
     }
 }
-

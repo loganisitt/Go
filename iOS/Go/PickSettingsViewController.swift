@@ -15,15 +15,34 @@ import TTRangeSlider
 
 class PickSettingsViewController: UIViewController, TTRangeSliderDelegate {
     
-    var titleLabel: UILabel!
-    var eventTitle: MKTextField! // Alternative Title
+    let shadowOffset = CGSize(width: -1, height: 1)
     
-    var privacySwitch: CustomSwitch! // Privacy (Public or Private)
-    var ageSwitch: CustomSwitch! //
+    var titleLabel: GOLabel!
+    var eventTitle: GOTextField!
+    
+    var privacySwitch: CustomSwitch!
+    var ageSwitch: CustomSwitch!
     var ageSlider: TTRangeSlider!
-    var peopleStepper: CustomStepper! // Number of People (Slider)
+    var peopleStepper: CustomStepper!
     
     var ageConstraint: NSLayoutConstraint!
+    
+    var eventType: EventType! {
+        didSet {
+            people = eventType.numOfPlayers
+            if eventTitle != nil {
+                eventTitle.text = "\(eventType.name) Game"
+            }
+        }
+    }
+    
+    var people: Int! = 2 {
+        didSet {
+            if peopleStepper != nil {
+                peopleStepper.place = people / peopleStepper.multiplier   
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,36 +54,37 @@ class PickSettingsViewController: UIViewController, TTRangeSliderDelegate {
     // MARK: - Actions
     
     func ageRestrictionChanged() {
-        ageConstraint.constant = !ageSwitch.isOff ? -40 : 20
+        ageConstraint.constant = !ageSwitch.isOff ? -ageSlider.bounds.height : -12
+        if !ageSwitch.isOff {
+            view.bringSubviewToFront(ageSwitch)
+            ageSlider.hidden = true
+        }
+        else {
+            view.bringSubviewToFront(ageSlider)
+            ageSlider.hidden = false
+        }
+        UIView.animateWithDuration(0.4,
+            delay: 0.0,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 7.0,
+            options: UIViewAnimationOptions.CurveEaseOut,
+            animations: { () -> Void in
+                self.view.layoutIfNeeded()
+            },
+            completion: nil)
     }
     
     
     // MARK: - Views
     func setupViews() {
-        
-        let padding = CGSizeMake(21, 21)
-        
-        titleLabel = UILabel()
+                
+        titleLabel = GOLabel()
         titleLabel.text = self.title
-        titleLabel.textColor = UIColor.whiteColor()
-        titleLabel.textAlignment = .Center
-        
         titleLabel.font = UIFont.boldSystemFontOfSize(20)
         
-        titleLabel.backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
-        
-        eventTitle = MKTextField()
-        
-        eventTitle.layer.borderColor = UIColor.clearColor().CGColor
-        eventTitle.floatingPlaceholderEnabled = true
+        eventTitle = GOTextField()
         eventTitle.placeholder = "Event Name"
-        eventTitle.rippleLayerColor = UIColor.grayColor()
-        eventTitle.backgroundColor = UIColor(hex: 0xEEEEEE)
-        eventTitle.padding = padding
-        eventTitle.layer.cornerRadius = 0
-        eventTitle.bottomBorderEnabled = true
-        eventTitle.bottomBorderHighlightWidth = eventTitle.bottomBorderWidth
-        eventTitle.tintColor = eventTitle.bottomBorderColor
+        eventTitle.text = eventType != nil ? "\(eventType.name) Game" : ""
 
         privacySwitch = CustomSwitch()
         privacySwitch.offText = "Private"
@@ -72,15 +92,14 @@ class PickSettingsViewController: UIViewController, TTRangeSliderDelegate {
         privacySwitch.centerText = "Privacy"
         
         ageSwitch = CustomSwitch()
-        ageSwitch.isOff = true
+        ageSwitch.addTarget(self, action: "ageRestrictionChanged", forControlEvents: .ValueChanged)
 
-        ageSwitch.offText = "Off"
-        ageSwitch.onText = "On"
+        ageSwitch.isOff = true
         ageSwitch.centerText = "Age Restrictions"
         
-        ageSwitch.addTarget(self, action: "ageRestrictionChanged", forControlEvents: .ValueChanged)
-        
         ageSlider = TTRangeSlider()
+        ageSlider.backgroundColor = UIColor.go_blue()
+        ageSlider.tintColor = UIColor.go_white()
         
         ageSlider.delegate = self;
         ageSlider.minValue = 13;
@@ -88,14 +107,24 @@ class PickSettingsViewController: UIViewController, TTRangeSliderDelegate {
         ageSlider.selectedMinimum = 18;
         ageSlider.selectedMaximum = 40;
         
-        peopleStepper = CustomStepper()
+        ageSlider.layer.cornerRadius = 0
+        ageSlider.layer.shadowOpacity = 0.55
+        ageSlider.layer.shadowRadius = 0
+        ageSlider.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        ageSlider.layer.shadowOffset = shadowOffset
         
-        view.addSubview(titleLabel)
+        peopleStepper = CustomStepper()
+        peopleStepper.minValue = 2
+        peopleStepper.maxValue = 22
+        peopleStepper.multiplier = 2
+        peopleStepper.place = people / peopleStepper.multiplier
+        
         view.addSubview(eventTitle)
         view.addSubview(privacySwitch)
-        view.addSubview(ageSlider)
         view.addSubview(ageSwitch)
+        view.addSubview(ageSlider)
         view.addSubview(peopleStepper)
+        view.addSubview(titleLabel)
     }
     
     // MARK: - Layout
@@ -122,10 +151,10 @@ class PickSettingsViewController: UIViewController, TTRangeSliderDelegate {
         ageSwitch.autoPinEdgeToSuperviewEdge(.Right)
         ageSwitch.autoSetDimension(.Height, toSize: 50)
         
-        ageConstraint = ageSlider.autoPinEdge(.Top, toEdge: .Bottom, ofView: ageSwitch, withOffset: !ageSwitch.isOff ? -40 : 20)
+        ageConstraint = ageSlider.autoPinEdge(.Top, toEdge: .Bottom, ofView: ageSwitch, withOffset: !ageSwitch.isOff ? -70 : -12)
         ageSlider.autoPinEdgeToSuperviewEdge(.Left)
         ageSlider.autoPinEdgeToSuperviewEdge(.Right)
-        ageSlider.autoSetDimension(.Height, toSize: 40)
+        ageSlider.autoSetDimension(.Height, toSize: 70)
         
         peopleStepper.autoPinEdge(.Top, toEdge: .Bottom, ofView: ageSlider, withOffset: 8)
         peopleStepper.autoPinEdgeToSuperviewEdge(.Left)

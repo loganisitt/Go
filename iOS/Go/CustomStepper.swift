@@ -9,13 +9,41 @@
 import UIKit
 
 import PureLayout
+import MaterialKit
 
 class CustomStepper: UIControl {
 
-    var decButton: UIButton!
-    var incButton: UIButton!
-    var titleLabel: UILabel!
+    var decButton: MKButton!
+    var incButton: MKButton!
+    var titleLabel: MKLabel!
     
+    var place: Int = 0 {
+        didSet {
+            titleLabel.text = "Number of People: \(place * multiplier)"
+        }
+    }
+    
+    var multiplier: Int = 1 {
+        didSet {
+            titleLabel.text = "Number of People: \(place * multiplier)"
+        }
+    }
+    
+    var minValue: Int = 0 {
+        didSet {
+            while place * multiplier < minValue {
+                place++
+            }
+        }
+    }
+    
+    var maxValue: Int = 10 {
+        didSet {
+            while place * multiplier > minValue {
+                place--
+            }
+        }
+    }
     // MARK: - Initialization
     
     override init(frame: CGRect) {
@@ -33,29 +61,63 @@ class CustomStepper: UIControl {
     // MARK: - Setup
     
     func setup() {
-        backgroundColor = UIColor.whiteColor()
         
-        decButton = UIButton.buttonWithType(.Custom) as! UIButton
+        backgroundColor = UIColor.go_blue()
         
-        decButton.backgroundColor = UIColor.darkGrayColor()
+        layer.cornerRadius = 0
+        layer.shadowOpacity = 0.55
+        layer.shadowRadius = 0
+        layer.shadowColor = UIColor.go_shadow_color().CGColor
+        layer.shadowOffset = CGSize(width: -1, height: -1)
         
-        decButton.setTitle("-", forState: .Normal)
-        decButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        var shadow = NSShadow()
+        shadow.shadowOffset = CGSize(width: -1, height: 1)
+        shadow.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.55)
         
-        incButton = UIButton.buttonWithType(.Custom) as! UIButton
+        decButton = MKButton()
+        decButton.addTarget(self, action: "decrementButtonAction", forControlEvents: .TouchUpInside)
         
-        incButton.backgroundColor = UIColor.darkGrayColor()
+        decButton.layer.cornerRadius = 0
         
-        incButton.setTitle("+", forState: .Normal)
-        incButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        decButton.titleLabel?.font = UIFont.ioniconOfSize(35)
         
-        titleLabel = UILabel()
+        decButton.setTitle(String.ioniconWithName(Ionicon.Minus), forState: .Normal)
+        decButton.setTitleColor(UIColor.go_white(), forState: .Normal)
         
-        titleLabel.backgroundColor = UIColor.lightGrayColor()
+        decButton.titleLabel?.layer.cornerRadius = 0
+        decButton.titleLabel?.layer.shadowOpacity = 0.55
+        decButton.titleLabel?.layer.shadowRadius = 0
+        decButton.titleLabel?.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        decButton.titleLabel?.layer.shadowOffset = CGSize(width: -1, height: 1)
         
-        titleLabel.text = "Number: "
-        titleLabel.textColor = UIColor.whiteColor()
+        incButton = MKButton()
+        incButton.addTarget(self, action: "incrementButtonAction", forControlEvents: .TouchUpInside)
+        
+        incButton.layer.cornerRadius = 0
+        
+        incButton.titleLabel?.font = UIFont.ioniconOfSize(35)
+        
+        incButton.setTitle(String.ioniconWithName(Ionicon.Plus), forState: .Normal)
+        incButton.setTitleColor(UIColor.go_white(), forState: .Normal)
+        
+        incButton.titleLabel?.layer.cornerRadius = 0
+        incButton.titleLabel?.layer.shadowOpacity = 0.55
+        incButton.titleLabel?.layer.shadowRadius = 0
+        incButton.titleLabel?.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        incButton.titleLabel?.layer.shadowOffset = CGSize(width: -1, height: 1)
+        
+        titleLabel = MKLabel()
+        
+        titleLabel.textColor = UIColor.go_white()
         titleLabel.textAlignment = .Center
+        
+        titleLabel.font = UIFont.boldSystemFontOfSize(18)
+        
+        titleLabel.layer.cornerRadius = 0
+        titleLabel.layer.shadowOpacity = 0.55
+        titleLabel.layer.shadowRadius = 0
+        titleLabel.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        titleLabel.layer.shadowOffset = CGSize(width: -1, height: 1)
         
         addSubview(decButton)
         addSubview(incButton)
@@ -86,5 +148,19 @@ class CustomStepper: UIControl {
         titleLabel.autoPinEdgeToSuperviewEdge(.Bottom)
         titleLabel.autoPinEdge(.Left, toEdge: .Right, ofView: decButton)
         titleLabel.autoPinEdge(.Right, toEdge: .Left, ofView: incButton)
+    }
+    
+    // MARK: - Actions
+    
+    func decrementButtonAction() {
+        if (place - 1) * multiplier >= minValue {
+            place--
+        }
+    }
+    
+    func incrementButtonAction() {
+        if (place + 1) * multiplier <= maxValue {
+            place++
+        }
     }
 }

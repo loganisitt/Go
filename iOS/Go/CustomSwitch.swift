@@ -8,22 +8,39 @@
 
 import UIKit
 
+import MaterialKit
+
 class CustomSwitch: UIControl {
     
     var backgroundView: UIView!
     
-    var onButton: UIButton!
-    var offButton: UIButton!
+    var onButton: MKButton!
+    var offButton: MKButton!
     var buttonWindow: UIView!
     
-    var onLabel: UILabel!
-    var offLabel: UILabel!
-    var centerCircleLabel: UILabel!
+    var onLabel: MKLabel!
+    var offLabel: MKLabel!
+    var centerCircleLabel: MKLabel!
     
-    let whiteColor = UIColor.whiteColor()
-    let darkGreyColor = UIColor(red:0.22, green:0.22, blue:0.22, alpha:1)
+    let whiteColor = UIColor.go_white()
+    let darkGreyColor = UIColor.go_blue()
     
-    var isOff: Bool = true
+    var isOff: Bool = true {
+        didSet {
+            if isOff {
+                if offLabel != nil && onLabel != nil {
+                    offLabel.layer.shadowColor = UIColor.go_shadow_color().CGColor
+                    onLabel.layer.shadowColor = UIColor.go_white().CGColor
+                }
+            }
+            else {
+                if offLabel != nil && onLabel != nil {
+                    offLabel.layer.shadowColor = UIColor.go_white().CGColor
+                    onLabel.layer.shadowColor = UIColor.go_shadow_color().CGColor
+                }
+            }
+        }
+    }
     
     var offText: String = "Off" {
         didSet {
@@ -67,14 +84,14 @@ class CustomSwitch: UIControl {
         
         // Setup the Buttons
         
-        onButton = UIButton()
+        onButton = MKButton()
         onButton.frame = CGRectMake(0.0, 0.0, self.bounds.size.width / 2, self.bounds.size.height)
         onButton.backgroundColor = UIColor.clearColor()
         onButton.enabled = false
         onButton.addTarget(self, action: "toggleSwitch:", forControlEvents: UIControlEvents.TouchUpInside)
         self.addSubview(onButton)
         
-        offButton = UIButton()
+        offButton = MKButton()
         offButton.frame = CGRectMake(self.bounds.size.width / 2, 0.0, self.bounds.size.width / 2, self.bounds.size.height)
         offButton.backgroundColor = UIColor.clearColor()
         offButton.enabled = true
@@ -83,41 +100,64 @@ class CustomSwitch: UIControl {
         
         // Setup the Labels
         
-        onLabel = UILabel()
+        onLabel = MKLabel()
         onLabel.frame = CGRectMake(0.0, (self.bounds.size.height / 2) - 25.0, self.bounds.size.width / 2, 50.0)
         onLabel.alpha = 1.0
         onLabel.text = onText
         onLabel.textAlignment = NSTextAlignment.Center
         onLabel.textColor = whiteColor
-        onLabel.font = UIFont(name: "AvenirNext-Demibold", size: 15.0)
+        onLabel.font = UIFont.boldSystemFontOfSize(14)
         onButton.addSubview(onLabel)
         
-        offLabel = UILabel()
+        onLabel.layer.cornerRadius = 0
+        onLabel.layer.shadowOpacity = 0.55
+        onLabel.layer.shadowRadius = 0
+        onLabel.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        onLabel.layer.shadowOffset = CGSize(width: -1, height: 1)
+        
+        offLabel = MKLabel()
         offLabel.frame = CGRectMake(0.0, (self.bounds.size.height / 2) - 25.0, self.bounds.size.width / 2, 50.0)
         offLabel.alpha = 1.0
         offLabel.text = offText
         offLabel.textAlignment = NSTextAlignment.Center
         offLabel.textColor = darkGreyColor
-        offLabel.font = UIFont(name: "AvenirNext-Demibold", size: 15.0)
+        offLabel.font = UIFont.boldSystemFontOfSize(14)
         offButton.addSubview(offLabel)
+        
+        offLabel.layer.cornerRadius = 0
+        offLabel.layer.shadowOpacity = 0.55
+        offLabel.layer.shadowRadius = 0
+        offLabel.layer.shadowColor = UIColor.go_shadow_color().CGColor
+        offLabel.layer.shadowOffset = CGSize(width: -1, height: 1)
         
         // Set up the center Label
         
-        centerCircleLabel = UILabel()
-        centerCircleLabel.frame = CGRectMake((self.bounds.size.width / 2) - 12.0, (self.bounds.size.height / 2) - 12.0, 24.0, 24.0)
+        centerCircleLabel = MKLabel()
         centerCircleLabel.text = centerText
         centerCircleLabel.sizeToFit()
-        centerCircleLabel.frame = CGRectMake((self.bounds.size.width / 2) - centerCircleLabel.bounds.width / 2, (self.bounds.size.height / 2) - centerCircleLabel.bounds.height / 2, centerCircleLabel.bounds.size.width, centerCircleLabel.bounds.size.height)
-        
+        centerCircleLabel.frame = CGRectMake((self.bounds.size.width / 2.0) - centerCircleLabel.bounds.width / 2.0, (self.bounds.size.height / 2.0) - centerCircleLabel.bounds.height / 2.0, centerCircleLabel.bounds.size.width, centerCircleLabel.bounds.size.height)
+        centerCircleLabel.frame = CGRectInset(centerCircleLabel.frame, -4, -4)
+
+        centerCircleLabel.textColor = UIColor.go_white()
         centerCircleLabel.textAlignment = NSTextAlignment.Center
-        centerCircleLabel.textColor = UIColor(red:0.49, green:0.49, blue:0.49, alpha:1)
-        centerCircleLabel.font = UIFont(name: "AvenirNext-Regular", size: 11.0)
-        centerCircleLabel.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1)
-        centerCircleLabel.layer.cornerRadius = 12.0
+        
+        var shadow = NSShadow()
+        shadow.shadowOffset = CGSize(width: -1, height: 1)
+        shadow.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.55)
+        
+        centerCircleLabel.attributedText = NSAttributedString(string: centerText, attributes: [NSFontAttributeName: UIFont.boldSystemFontOfSize(16),  NSShadowAttributeName: shadow])
+
+        centerCircleLabel.backgroundColor = UIColor.go_blue()
         centerCircleLabel.clipsToBounds = true
         self.addSubview(centerCircleLabel)
         
         isOff = false
+        
+        layer.cornerRadius = 0
+        layer.shadowOpacity = 0.55
+        layer.shadowRadius = 0
+        layer.shadowColor = UIColor.go_shadow_color().CGColor
+        layer.shadowOffset = CGSize(width: -1, height: 1)
     }
     
     func toggleSwitch(sender: UIButton) {

@@ -8,29 +8,36 @@
 
 import UIKit
 
+import Haneke
+
+import MaterialKit
+
 class PickEventViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    var titleLabel: UILabel!
+    var titleLabel: GOLabel!
     var collectionView: UICollectionView!
+    
+    var eventTypes: [EventType] = []
+    var eventType: EventType!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
         layoutViews()
+        
+        Client.sharedInstance.getAllEventTypes({ (eventTypes, error) -> () in
+            self.eventTypes = eventTypes
+            self.collectionView.reloadData()
+        })
     }
     
     // MARK: - Views
     func setupViews() {
         
-        titleLabel = UILabel()
+        titleLabel = GOLabel()
         titleLabel.text = self.title
-        titleLabel.textColor = UIColor.whiteColor()
-        titleLabel.textAlignment = .Center
-        
         titleLabel.font = UIFont.boldSystemFontOfSize(20)
-        
-        titleLabel.backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .Vertical
@@ -40,12 +47,12 @@ class PickEventViewController: UIViewController, UICollectionViewDelegate, UICol
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        collectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.registerClass(EventTypeCollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
                 
-        collectionView.backgroundColor = UIColor.whiteColor()
+        collectionView.backgroundColor = UIColor.go_main_color()
         
-        view.addSubview(titleLabel)
         view.addSubview(collectionView)
+        view.addSubview(titleLabel)
     }
     
     // MARK: - Layout
@@ -69,19 +76,31 @@ class PickEventViewController: UIViewController, UICollectionViewDelegate, UICol
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 21
+        return count(eventTypes)
     }
     
     // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        var cell: UICollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as! UICollectionViewCell
+        var cell: EventTypeCollectionViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as! EventTypeCollectionViewCell
         
-        cell.backgroundColor = UIColor().randomColor()
+        cell.titleLabel.text = eventTypes[indexPath.row].name
         
+        let url: NSURL = NSURL(string: Client.sharedInstance.baseUrl + eventTypes[indexPath.row].imagePath)!
+        
+        cell.imageView.hnk_setImageFromURL(url, placeholder: UIImage(named: "Logo"), format: nil, failure: { (error: NSError?) -> () in
+            println("Error: \(error)")
+        }, success: { (image: UIImage) -> () in
+            cell.imageView.image = image.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        })
+                
         return cell
     }
     
     // MARK: - UICollectionView Delegate
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        eventType = eventTypes[indexPath.row]
+    }
     
     // MARK: - UICollectionViewDelegateFlowLayout
     

@@ -8,6 +8,9 @@
 
 import UIKit
 
+import PureLayout
+import MaterialKit
+
 class DateScroller: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     var dateFormatter: NSDateFormatter!
@@ -40,8 +43,9 @@ class DateScroller: UICollectionView, UICollectionViewDelegate, UICollectionView
         registerClass(DateCell.self, forCellWithReuseIdentifier: "Cell")
         registerClass(DateHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "Header")
         
-        backgroundColor = UIColor(red: 0, green: 177.0/255.0, blue: 106.0/255.0, alpha: 1.0)
+        backgroundColor = UIColor.go_main_color()
         
+
         dateFormatter = NSDateFormatter()
     }
     
@@ -100,16 +104,6 @@ class DateScroller: UICollectionView, UICollectionViewDelegate, UICollectionView
     
     // MARK: - UICollectionView Delegate
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        var cell: DateCell = collectionView.cellForItemAtIndexPath(indexPath) as! DateCell
-        cell.backgroundColor = UIColor.MKColor.LightGreen
-    }
-    
-    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
-        var cell: DateCell = collectionView.cellForItemAtIndexPath(indexPath) as! DateCell
-        cell.backgroundColor = UIColor.clearColor()
-    }
-    
     // MARK: - UICollectionViewDelegateFlowLayout
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
@@ -136,5 +130,120 @@ class DateScroller: UICollectionView, UICollectionViewDelegate, UICollectionView
     }
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         return CGSizeZero
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+class DateHeader: UICollectionReusableView {
+    
+    let shadowOffset = CGSize(width: -1, height: 1)
+
+    var mainLabel: GOLabel!
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setup()
+    }
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        setup()
+    }
+    
+    func setup() {
+        
+        mainLabel = GOLabel(frame: bounds)
+        mainLabel.font = UIFont.boldSystemFontOfSize(14)
+        
+        mainLabel.transform = CGAffineTransformMakeRotation(CGFloat(-M_PI_2))
+        
+        addSubview(mainLabel)
+        
+        layout()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        mainLabel.frame = bounds
+    }
+    
+    func layout() {
+        mainLabel.autoPinEdgeToSuperviewEdge(.Top)
+        mainLabel.autoPinEdgeToSuperviewEdge(.Left)
+        mainLabel.autoPinEdgeToSuperviewEdge(.Right)
+        mainLabel.autoPinEdgeToSuperviewEdge(.Bottom)
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+class DateCell: UICollectionViewCell {
+    
+    let shadowOffset = CGSize(width: -1, height: 1)
+    
+    var mainLabel: GOLabel!
+    var topLabel: GOLabel!
+    
+    override var selected: Bool {
+        didSet {
+            if selected {
+                topLabel.textColor = UIColor.go_yellow()
+                mainLabel.textColor = UIColor.go_yellow()
+            }
+            else {
+                topLabel.textColor = UIColor.go_white()
+                mainLabel.textColor = UIColor.go_white()
+            }
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setup()
+    }
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        setup()
+    }
+    
+    func setup() {
+        setupViews()
+        layoutViews()
+    }
+    
+    func setupViews() {
+                
+        mainLabel = GOLabel()
+        mainLabel.font = UIFont.boldSystemFontOfSize(26)
+        mainLabel.backgroundAniEnabled = false
+        
+        topLabel = GOLabel()
+        topLabel.font = UIFont.boldSystemFontOfSize(12)
+        topLabel.backgroundAniEnabled = false
+        
+        addSubview(mainLabel)
+        addSubview(topLabel)
+    }
+    
+    func layoutViews() {
+        topLabel.autoPinEdgeToSuperviewEdge(.Top, withInset: 4)
+        topLabel.autoPinEdgeToSuperviewEdge(.Left)
+        topLabel.autoPinEdgeToSuperviewEdge(.Right)
+        
+        mainLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: topLabel, withOffset: 2)
+        mainLabel.autoPinEdgeToSuperviewEdge(.Left)
+        mainLabel.autoPinEdgeToSuperviewEdge(.Right)
+        mainLabel.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 8)
     }
 }
