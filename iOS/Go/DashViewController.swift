@@ -14,6 +14,8 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
     var dateScroller: DateScroller!
     var tableView: UITableView!
     
+    var events: [Event] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -26,6 +28,15 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         setupViews()
         layoutViews()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        Client.sharedInstance.allEvents { events, error in
+            self.events = events
+            self.tableView.reloadData()
+        }
     }
     
     // MARK: - Actions 
@@ -46,7 +57,7 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.registerClass(DashTableViewCell.self, forCellReuseIdentifier: "Cell")
         
         tableView.rowHeight = 60
         tableView.sectionHeaderHeight = 0
@@ -75,6 +86,10 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // MARK: - UITableViewDelegate
     
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 44.0
+    }
+    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
@@ -82,12 +97,22 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: - TableView Data Source
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return count(events)
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier("Cell") as! UITableViewCell
+        var cell: DashTableViewCell = tableView.dequeueReusableCellWithIdentifier("Cell") as! DashTableViewCell
+        
+        let event = events[indexPath.row]
+        let url = NSURL(string: Client.sharedInstance.baseUrl + event.eventType.imagePath) as NSURL!
+        
+        cell.imageView!.hnk_setImageFromURL(url, placeholder: UIImage(named: "Logo"), format: nil, failure: { (error: NSError?) -> () in
+                println(error)
+            }, success: { (image: UIImage) -> () in
+                cell.imageView?.image = image
+            })
+        cell.textLabel?.text = events[indexPath.row].name
         
         return cell
     }

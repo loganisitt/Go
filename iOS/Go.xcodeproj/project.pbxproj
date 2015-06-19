@@ -26,6 +26,7 @@
 		026F721E1B2BC38500C6496E /* NSMutableDataExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F721D1B2BC38500C6496E /* NSMutableDataExtension.swift */; };
 		026F72211B2BC91300C6496E /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F72201B2BC91300C6496E /* MainNavigationController.swift */; };
 		026F72231B2BCA1C00C6496E /* UIBarButtonItemExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F72221B2BCA1C00C6496E /* UIBarButtonItemExtension.swift */; };
+		02815EEE1B33996F00169DA5 /* DashTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02815EED1B33996F00169DA5 /* DashTableViewCell.swift */; };
 		02852CC91B1F993D00CE2EA4 /* UINavigationControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02852CC81B1F993D00CE2EA4 /* UINavigationControllerExtension.swift */; };
 		028EEF0A1B1FA28B007DFBA7 /* SNButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028EEF091B1FA28B007DFBA7 /* SNButton.swift */; };
 		028EEF0F1B1FA9B4007DFBA7 /* FontAwesome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028EEF0E1B1FA9B4007DFBA7 /* FontAwesome.swift */; };
@@ -83,6 +84,7 @@
 		026F721D1B2BC38500C6496E /* NSMutableDataExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableDataExtension.swift; sourceTree = "<group>"; };
 		026F72201B2BC91300C6496E /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		026F72221B2BCA1C00C6496E /* UIBarButtonItemExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIBarButtonItemExtension.swift; sourceTree = "<group>"; };
+		02815EED1B33996F00169DA5 /* DashTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashTableViewCell.swift; sourceTree = "<group>"; };
 		02852CC81B1F993D00CE2EA4 /* UINavigationControllerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UINavigationControllerExtension.swift; sourceTree = "<group>"; };
 		028EEF031B1FA1ED007DFBA7 /* Go-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Go-Bridging-Header.h"; sourceTree = "<group>"; };
 		028EEF091B1FA28B007DFBA7 /* SNButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = SNButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -265,6 +267,7 @@
 				02AE0BD01B2806E800206265 /* CustomSwitch.swift */,
 				02BB0D331B28A465000FDFD7 /* CustomStepper.swift */,
 				026F72051B2A3B3C00C6496E /* EventTypeCollectionViewCell.swift */,
+				02815EED1B33996F00169DA5 /* DashTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -473,6 +476,7 @@
 				02AE0BC71B2762BF00206265 /* PickLocationViewController.swift in Sources */,
 				02AE0BCD1B27E84200206265 /* UIColorExtension.swift in Sources */,
 				026F721A1B2BC27700C6496E /* User.swift in Sources */,
+				02815EEE1B33996F00169DA5 /* DashTableViewCell.swift in Sources */,
 				02D9EBBB1B21F707001CB3EF /* UIImageExtension.swift in Sources */,
 				026F72011B2A370B00C6496E /* EventType.swift in Sources */,
 				0237D9401B1EEBE600D334F1 /* ModelController.swift in Sources */,

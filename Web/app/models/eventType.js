@@ -2,8 +2,6 @@ var mongoosastic = require('mongoosastic');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var ObjectId = mongoose.Schema.Types.ObjectId;
-
 var EventType = new Schema({
   name: {
     type: String,

@@ -2,16 +2,34 @@ var mongoosastic = require('mongoosastic');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var ObjectId = mongoose.Schema.Types.ObjectId;
+
 var Event = new Schema({
-  type: String,
+  name: String,
+  privacy: Boolean,
+  event_type: {
+    type: ObjectId,
+    ref: 'EventType',
+    required: true
+  },
   location_name: String,
-  location: {},
-  adminId: String,
+  location: {
+    type: [Number],
+    index: '2d' 
+  },
+  admin: {
+    type: ObjectId,
+    ref: 'User',
+    required: true
+  },
   date: Date,
+  max_attendess: Number,
+  attendees: [String],
+  age_restriction: Boolean,
+  min_age: Number,
+  max_age: Number,
   created_at: Date,
-  updated_at: Date,
-  attendees_count: Number,
-  attendees: [String]
+  updated_at: Date
 });
 
 // On every save, add the date

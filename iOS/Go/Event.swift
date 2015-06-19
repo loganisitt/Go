@@ -13,12 +13,26 @@ import ObjectMapper
 class Event: Mappable {
     
     var id: String!
-    var adminId: String!
-    var type: String!
+    var admin: User!
+    
+    var name: String!
+    
+    var eventType: EventType!
+    
+    var privacy: Bool!
+    
     var date: NSDate!
+    
     var locationName: String!
+    var location: [Double]!
+    
     var maxAttendees: Int!
-        
+
+    
+    var ageRestrictions: Bool!
+    var minAge: Int!
+    var maxAge: Int!
+    
     init() {}
     
     required init?(_ map: Map) {
@@ -26,11 +40,17 @@ class Event: Mappable {
     }
     
     func mapping(map: Map) {
-        adminId <- map["_id"]
-        adminId <- map["adminId"]
-        type    <- map["type"]
+        id  <- map["_id"]
+        admin   <- map["admin"]
+        name    <- map["name"]
+        eventType   <- map["event_type"]
+        privacy <- map["privacy"]
         date    <- map["date"]
-        locationName    <- map["locationName"]
-        maxAttendees    <- map["maxAttendees"]
+        locationName    <- map["location_name"]
+        location    <- map["location"]
+        maxAttendees    <- map["max_attendees"]
+        ageRestrictions <- map["age_restriction"]
+        minAge  <- map["min_age"]
+        maxAge  <- map["max_age"]
     }
 }

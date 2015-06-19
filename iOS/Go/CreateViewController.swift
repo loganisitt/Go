@@ -84,7 +84,59 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
     // MARK: - Actions
     
     func doneButtonAction() {
-        navigationController?.popViewControllerAnimated(true)
+        
+        if let eventType = pickEventViewController.eventType {
+            if let place = pickLocationViewController.place {
+                
+                if let date = pickTimeViewController.date {
+                    
+                    let eventName = pickSettingsViewController.eventTitle.hasText() ? pickSettingsViewController.eventTitle.text : "\(eventType.name) Game"
+                    
+                    let adminId = Client.sharedInstance.currentUser.id
+                    
+                    let privacy = pickSettingsViewController.privacySwitch.isOff
+                    let restrict = pickSettingsViewController.ageSwitch.isOff
+                    
+                    let minAge = pickSettingsViewController.ageSlider.minValue
+                    let maxAge = pickSettingsViewController.ageSlider.maxValue
+                    
+                    place.getDetails { details in
+                        
+                        var parameters =
+                        ["name": eventName,
+                            "admin": adminId,
+                            "privacy": privacy,
+                            "type": eventType.id,
+                            "location": place.description,
+                            "longitude": details.longitude,
+                            "latitude": details.latitude,
+                            "date": date,
+                            "maxAttendees": eventType.numOfPlayers,
+                            "restrictions": restrict,
+                            "minAge": minAge,
+                            "maxAge": maxAge]
+                        
+                        Client.sharedInstance.createEvent(parameters) { error in
+                            if error != nil {
+                                println("Error: \(error)")
+                            }
+                            else {
+                                self.navigationController?.popViewControllerAnimated(true)
+                            }
+                        }
+                    }
+                }
+                else {
+                    println("Error: No Date defined")
+                }
+            }
+            else {
+                println("Error: No Place defined")
+            }
+        }
+        else {
+            println("Error: No Event Type defined")
+        }
     }
     
     func backButtonAction() {

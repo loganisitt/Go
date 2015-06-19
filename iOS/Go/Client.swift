@@ -117,53 +117,45 @@ class Client {
     
     // MARK: - Event
     
-    func createEvent(packet: Dictionary<String, AnyObject>, imgPaths: [String]) -> Bool{
+    // Create
+    func createEvent(parameters: Dictionary<String, AnyObject>, completionHandler: (error: NSError?) -> ()) {
+        makeEvent(parameters, completionHandler: completionHandler)
+    }
+    
+    func makeEvent(parameters: Dictionary<String, AnyObject>, completionHandler: (error: NSError?) -> ()) {
         
-        var urlString = baseUrl + "/api/event"
+        var url = baseUrl + "/api/event"
         
-        let boundary = generateBoundaryString()
-        
-        let url = NSURL(string: urlString)
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "POST"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        
-        var fileManager = NSFileManager.defaultManager()
-        
-        var paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-        var documentsDirectory: AnyObject = paths[0]
-        
-        request.HTTPBody = createBodyWithParameters(packet, filePathKey: "file", paths: imgPaths, boundary: boundary)
-        
-        Alamofire.request(request)
-            .validate()
-            .progress {
-                (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
-                
-                println(totalBytesWritten)
+        Alamofire.request(.POST, url, parameters: parameters).validate().response { request, response, responseObject, error in
+            if (responseObject != nil) {
+                completionHandler(error: error)
             }
-            .responseJSON() {
-                (request, res, data, error) in
-                
-                println(data)
-                if (data != nil) {
-                    var event: Event = Mapper<Event>().map(data)!
-                }
-                else {
-                    println("Error: \(error)")
-                }
-                
-                // Clean up saved images
-                for path in imgPaths {
-                    if fileManager.fileExistsAtPath(path) {
-                        fileManager.removeItemAtPath(path, error: nil)
-                        println("Removed file at path: \(path)")
-                    }
-                }
+            else {
+                completionHandler(error: error)
+            }
         }
+    }
+    
+    // All Events
+    func allEvents(completionHandler: (events: [Event], error: NSError?) -> ()) {
+        getAllEvents(completionHandler)
+
+    }
+    
+    func getAllEvents(completionHandler: (events: [Event], error: NSError?) -> ()) {
         
+        var url = baseUrl + "/api/event"
         
-        return true
+        Alamofire.request(.GET, url).validate().responseJSON() { request, response, responseObject, error in
+
+            if (responseObject != nil) {
+                var events: [Event] = Mapper<Event>().mapArray(responseObject)!
+                completionHandler(events: events, error: error)
+            }
+            else {
+                completionHandler(events: [], error: error)
+            }
+        }
     }
     
     func basicSearchFor(query: String) -> Bool {
@@ -183,25 +175,6 @@ class Client {
             self.delegate.receivedEvents!(events)
         }
         return true
-    }
-    
-    func getAllEvents(){
-        
-        var urlString = baseUrl + "/api/event"
-        
-        Alamofire.request(.GET, urlString).validate().responseJSON() {
-            (_, _, data, error) in
-            
-            if (data != nil) {
-                
-                var events: [Event] = Mapper<Event>().mapArray(data)!
-                
-                self.delegate.receivedEvents!(events)
-            }
-            else {
-                println("Error: \(error)")
-            }
-        }
     }
     
     func makeBid(event: Event) -> Bool {

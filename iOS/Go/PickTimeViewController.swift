@@ -18,9 +18,17 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
     var subtitleLabel: GOLabel!
     var dateScroller: DateScroller!
     var tableView: UITableView!
+    var datePicker: UIDatePicker!
+    
+    var date: NSDate!
+    var dateFormatter: NSDateFormatter!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = .LongStyle
+        dateFormatter.timeStyle = .ShortStyle
         
         setupViews()
         layoutViews()
@@ -54,11 +62,18 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
         
         tableView.backgroundColor = UIColor.go_main_color()
         tableView.separatorStyle = .None
+        
+        datePicker = UIDatePicker()
+        datePicker.addTarget(self, action: "datePickerValueChanged", forControlEvents: .ValueChanged)
+        
+        datePicker.minuteInterval = 15
 
-        view.addSubview(dateScroller)
-        view.addSubview(tableView)
+        
+//        view.addSubview(dateScroller)
+//        view.addSubview(tableView)
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
+        view.addSubview(datePicker)
     }
     
     // MARK: - Layout
@@ -75,15 +90,19 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
         subtitleLabel.autoPinEdgeToSuperviewEdge(.Right)
         subtitleLabel.autoSetDimension(.Height, toSize: 20)
         
-        dateScroller.autoPinEdge(.Top, toEdge: .Bottom, ofView: subtitleLabel, withOffset: 0)
-        dateScroller.autoPinEdgeToSuperviewEdge(.Left)
-        dateScroller.autoPinEdgeToSuperviewEdge(.Right)
-        dateScroller.autoSetDimension(.Height, toSize: (view.bounds.width - 20)/7.0)
+        datePicker.autoPinEdge(.Top, toEdge: .Bottom, ofView: subtitleLabel)
+        datePicker.autoPinEdgeToSuperviewEdge(.Left)
+        datePicker.autoPinEdgeToSuperviewEdge(.Right)
         
-        tableView.autoPinEdge(.Top, toEdge: .Bottom, ofView: dateScroller)
-        tableView.autoPinEdgeToSuperviewEdge(.Left)
-        tableView.autoPinEdgeToSuperviewEdge(.Right)
-        tableView.autoPinToBottomLayoutGuideOfViewController(self, withInset: 0)
+//        dateScroller.autoPinEdge(.Top, toEdge: .Bottom, ofView: subtitleLabel, withOffset: 0)
+//        dateScroller.autoPinEdgeToSuperviewEdge(.Left)
+//        dateScroller.autoPinEdgeToSuperviewEdge(.Right)
+//        dateScroller.autoSetDimension(.Height, toSize: (view.bounds.width - 20)/7.0)
+//        
+//        tableView.autoPinEdge(.Top, toEdge: .Bottom, ofView: dateScroller)
+//        tableView.autoPinEdgeToSuperviewEdge(.Left)
+//        tableView.autoPinEdgeToSuperviewEdge(.Right)
+//        tableView.autoPinToBottomLayoutGuideOfViewController(self, withInset: 0)
     }
     
     // MARK: - TableView Data Source
@@ -124,5 +143,12 @@ class PickTimeViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+    
+    // MARK: - UIDatePicker Action
+    
+    func datePickerValueChanged() {
+        date = datePicker.date
+        subtitleLabel.text = dateFormatter.stringFromDate(datePicker.date)
     }
 }
