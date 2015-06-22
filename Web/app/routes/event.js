@@ -16,4 +16,7 @@ module.exports = function (app) {
 	
     // Our route and mechanism for when we get a request to attend an event.
     app.post('/api/event/join', controller.join);
+
+    // Our route and mechanism for when we get a request to attend an event.
+    app.post('/api/event/leave', controller.leave);
 };
