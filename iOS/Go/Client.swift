@@ -118,7 +118,10 @@ class Client {
     // MARK: - Event
     
     // Create
-    func createEvent(parameters: Dictionary<String, AnyObject>, completionHandler: (error: NSError?) -> ()) {
+    
+    func createEvent(event: Event, completionHandler: (error: NSError?) -> ()) {
+        
+        let parameters = Mapper().toJSON(event)
         makeEvent(parameters, completionHandler: completionHandler)
     }
     
@@ -149,6 +152,7 @@ class Client {
         Alamofire.request(.GET, url).validate().responseJSON() { request, response, responseObject, error in
 
             if (responseObject != nil) {
+                println(responseObject)
                 var events: [Event] = Mapper<Event>().mapArray(responseObject)!
                 completionHandler(events: events, error: error)
             }
@@ -157,6 +161,60 @@ class Client {
             }
         }
     }
+    
+    // Join
+    
+    func joinEvent(event: Event, completionHandler: (event: Event?, error: NSError?) -> ()) {
+        postJoinEvent(event, completionHandler: completionHandler)
+    }
+    
+    func postJoinEvent(event: Event, completionHandler: (event: Event?, error: NSError?) -> ()) {
+        var url = baseUrl + "/api/event/join"
+        
+        let parameters =
+        ["user": currentUser.id,
+         "event": event.id]
+
+        
+        Alamofire.request(.POST, url, parameters: parameters).validate().responseJSON() { request, response, responseObject, error in
+            
+            if (responseObject != nil) {
+                var event: Event = Mapper<Event>().map(responseObject)!
+                completionHandler(event: event, error: error)
+            }
+            else {
+                completionHandler(event: nil, error: error)
+            }
+        }
+    }
+    
+    // Leave 
+    
+    func leaveEvent(event: Event, completionHandler: (event: Event?, error: NSError?) -> ()) {
+        postLeaveEvent(event, completionHandler: completionHandler)
+    }
+    
+    func postLeaveEvent(event: Event, completionHandler: (event: Event?, error: NSError?) -> ()) {
+        var url = baseUrl + "/api/event/leave"
+        
+        let parameters =
+        ["user": currentUser.id,
+         "event": event.id]
+        
+        
+        Alamofire.request(.POST, url, parameters: parameters).validate().responseJSON() { request, response, responseObject, error in
+            
+            if (responseObject != nil) {
+                var event: Event = Mapper<Event>().map(responseObject)!
+                completionHandler(event: event, error: error)
+            }
+            else {
+                completionHandler(event: nil, error: error)
+            }
+        }
+    }
+    
+    //
     
     func basicSearchFor(query: String) -> Bool {
         

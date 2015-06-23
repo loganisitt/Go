@@ -9,6 +9,8 @@
 import UIKit
 import Cent
 
+import ObjectMapper
+
 class DashViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var dateScroller: DateScroller!
@@ -92,6 +94,8 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        
+        performSegueWithIdentifier("gotoEvent", sender: indexPath)
     }
     
     // MARK: - TableView Data Source
@@ -105,6 +109,7 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
         var cell: DashTableViewCell = tableView.dequeueReusableCellWithIdentifier("Cell") as! DashTableViewCell
         
         let event = events[indexPath.row]
+        
         let url = NSURL(string: Client.sharedInstance.baseUrl + event.eventType.imagePath) as NSURL!
         
         cell.imageView!.hnk_setImageFromURL(url, placeholder: UIImage(named: "Logo"), format: nil, failure: { (error: NSError?) -> () in
@@ -115,5 +120,14 @@ class DashViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.textLabel?.text = events[indexPath.row].name
         
         return cell
+    }
+    
+    // MARK: - Navigation
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "gotoEvent" {
+            let vc: EventViewController = segue.destinationViewController as! EventViewController
+            vc.event = events[(sender as! NSIndexPath).row]
+        }
     }
 }

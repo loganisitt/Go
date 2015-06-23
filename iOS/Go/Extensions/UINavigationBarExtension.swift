@@ -11,8 +11,14 @@ import UIKit
 extension UINavigationBar {
     
     func hideHairline() {
-        if let hairlineView: UIImageView = self.findHairlineImageView(containedIn: self) {
+        if let hairlineView: UIImageView = findHairlineImageView(containedIn: self) {
             hairlineView.hidden = true
+        }
+    }
+    
+    func showHairline() {
+        if let hairlineView: UIImageView = findHairlineImageView(containedIn: self) {
+            hairlineView.hidden = false
         }
     }
     
@@ -22,10 +28,11 @@ extension UINavigationBar {
         }
         
         for subview in view.subviews {
-            if let imageView: UIImageView = self.findHairlineImageView(containedIn: subview as! UIView) {
+            if let imageView: UIImageView = findHairlineImageView(containedIn: subview as! UIView) {
                 return imageView
             }
         }
+        
         return nil
     }
     
@@ -47,4 +54,24 @@ extension UINavigationBar {
             addShadows(toView: subview as! UIView)
         }
     }
+    
+    func hideShadows() {
+        hideShadows(toView: self)
+    }
+    
+    func hideShadows(toView view: UIView) {
+        
+        if !(view is UIImageView) && !(view.bounds.size.height <= 1.0) {
+//            view.layer.cornerRadius = 0
+//            view.layer.shadowOpacity = 0.75
+//            view.layer.shadowRadius = 0
+            view.layer.shadowColor = UIColor.clearColor().CGColor
+//            view.layer.shadowOffset = CGSize(width: 0, height: 2)
+        }
+        
+        for subview in view.subviews {
+            hideShadows(toView: subview as! UIView)
+        }
+    }
+
 }

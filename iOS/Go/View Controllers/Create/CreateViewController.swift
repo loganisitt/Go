@@ -26,8 +26,8 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
         
         navigationItem.title = "Create"
     
-        navigationItem.rightBarButtonItem = UIBarButtonItem.saveButton(target: self, selector: "doneButtonAction")
         navigationItem.leftBarButtonItem = UIBarButtonItem.backButton(target: self, selector: "backButtonAction")
+        navigationItem.rightBarButtonItem = UIBarButtonItem.saveButton(target: self, selector: "doneButtonAction")
         
         addPageViewController()
         addProgressView()
@@ -100,23 +100,26 @@ class CreateViewController: UIViewController, UIPageViewControllerDataSource, UI
                     let minAge = pickSettingsViewController.ageSlider.minValue
                     let maxAge = pickSettingsViewController.ageSlider.maxValue
                     
+                    let dateFormatter: NSDateFormatter = NSDateFormatter()
+                    dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+                    
                     place.getDetails { details in
                         
-                        var parameters =
-                        ["name": eventName,
-                            "admin": adminId,
-                            "privacy": privacy,
-                            "type": eventType.id,
-                            "location": place.description,
-                            "longitude": details.longitude,
-                            "latitude": details.latitude,
-                            "date": date,
-                            "maxAttendees": eventType.numOfPlayers,
-                            "restrictions": restrict,
-                            "minAge": minAge,
-                            "maxAge": maxAge]
+                        let event = Event()
+                        event.name = eventName
+                        event.admin = Client.sharedInstance.currentUser
+                        event.privacy = privacy
+                        event.eventType = eventType
+                        event.locationName = place.description
+                        event.location = [details.longitude, details.latitude]
+                        event.date = date
+                        event.maxAttendees = eventType.numOfPlayers // TODO: Fix this
+                        event.ageRestrictions = restrict
+                        event.minAge = Int(minAge)
+                        event.maxAge = Int(maxAge)
                         
-                        Client.sharedInstance.createEvent(parameters) { error in
+                        Client.sharedInstance.createEvent(event) { error in
                             if error != nil {
                                 println("Error: \(error)")
                             }

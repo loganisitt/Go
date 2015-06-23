@@ -39,6 +39,8 @@ class User: Mappable {
     }
 }
 
+extension User: Equatable {}
+
 func == (left: User, right: User) -> Bool {
     return left.id == right.id
 }

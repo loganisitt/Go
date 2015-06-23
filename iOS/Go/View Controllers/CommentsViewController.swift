@@ -10,10 +10,13 @@ import UIKit
 
 class CommentsViewController: UIViewController {
 
+    var titleLabel: GOLabel!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        setupViews()
+        layout()
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,6 +24,20 @@ class CommentsViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func setupViews() {
+        titleLabel = GOLabel()
+        titleLabel.font = UIFont.boldSystemFontOfSize(20)
+        
+        view.addSubview(titleLabel)
+    }
+    
+    func layout() {
+        
+        titleLabel.autoPinToTopLayoutGuideOfViewController(self, withInset: 0)
+        titleLabel.autoPinEdgeToSuperviewEdge(.Left)
+        titleLabel.autoPinEdgeToSuperviewEdge(.Right)
+        titleLabel.autoSetDimension(.Height, toSize: 50)
+    }
 
     /*
     // MARK: - Navigation

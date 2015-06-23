@@ -7,7 +7,23 @@
 //
 
 import UIKit
+import ObjectMapper
 
 class EventTransformer: TransformType {
-   
+    
+    typealias Object = Event
+    typealias JSON = String
+    
+    required init() {
+    }
+    
+    func transformFromJSON(value: AnyObject?) -> Object? {
+        
+        return Mapper<Object>().map(value)
+    }
+    
+    func transformToJSON(value: Object?) -> JSON? {
+        
+        return value?.id
+    }
 }

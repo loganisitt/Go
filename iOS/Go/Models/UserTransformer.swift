@@ -7,7 +7,23 @@
 //
 
 import UIKit
+import ObjectMapper
 
 class UserTransformer: TransformType {
    
+    typealias Object = User
+    typealias JSON = String
+    
+    required init() {
+    }
+    
+    func transformFromJSON(value: AnyObject?) -> Object? {
+        
+        return Mapper<User>().map(value)
+    }
+    
+    func transformToJSON(value: Object?) -> JSON? {
+        
+        return value?.id
+    }
 }

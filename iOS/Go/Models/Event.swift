@@ -12,7 +12,7 @@ import ObjectMapper
 
 class Event: Mappable {
     
-    var id: String!
+    var id: String?
     var admin: User!
     
     var name: String!
@@ -28,10 +28,11 @@ class Event: Mappable {
     
     var maxAttendees: Int!
 
-    
     var ageRestrictions: Bool!
     var minAge: Int!
     var maxAge: Int!
+    
+    var attendees: [User]?
     
     init() {}
     
@@ -41,16 +42,17 @@ class Event: Mappable {
     
     func mapping(map: Map) {
         id  <- map["_id"]
-        admin   <- map["admin"]
+        admin   <- (map["admin"], UserTransformer())
         name    <- map["name"]
-        eventType   <- map["event_type"]
+        eventType   <- (map["event_type"], EventTypeTransformer())
         privacy <- map["privacy"]
-        date    <- map["date"]
+        date    <- (map["date"], DateTransform())
         locationName    <- map["location_name"]
         location    <- map["location"]
         maxAttendees    <- map["max_attendees"]
         ageRestrictions <- map["age_restriction"]
         minAge  <- map["min_age"]
         maxAge  <- map["max_age"]
+        attendees  <- map["attendees"]
     }
 }

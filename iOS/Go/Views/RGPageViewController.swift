@@ -57,7 +57,7 @@ class RGPageViewController: UIViewController, UIPageViewControllerDataSource, UI
     }
     var tabbarHeight: CGFloat {
         get {
-            return 38.0
+            return 28.0
         }
     }
     var tabIndicatorWidthOrHeight: CGFloat {
@@ -67,7 +67,7 @@ class RGPageViewController: UIViewController, UIPageViewControllerDataSource, UI
     }
     var tabIndicatorColor: UIColor {
         get {
-            return UIColor.lightGrayColor()
+            return UIColor.go_blue()
         }
     }
     var tabMargin: CGFloat {
@@ -88,7 +88,7 @@ class RGPageViewController: UIViewController, UIPageViewControllerDataSource, UI
     }
     var tabbarStyle: RGTabbarStyle {
         get {
-            return .Blurred
+            return .Solid
         }
     }
     var tabbarPosition: RGTabbarPosition {
@@ -99,7 +99,7 @@ class RGPageViewController: UIViewController, UIPageViewControllerDataSource, UI
     var tabbar: UIView!
     var barTintColor: UIColor? {
         get {
-            return nil
+            return UIColor.go_main_color()
         }
     }
     var tabScrollView: UIScrollView = UIScrollView()
@@ -189,14 +189,14 @@ class RGPageViewController: UIViewController, UIPageViewControllerDataSource, UI
         tabScrollView.autoresizingMask = .FlexibleWidth
         pager.view.autoresizingMask = (UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth)
         
-        var barTop: CGFloat = 20
+        var barTop: CGFloat = 0 // 20
         
         // remove hairline image in navigation bar if attached to top
-        if let navController = navigationController where !navController.navigationBar.hidden {
-            barTop = 64
-            
-            navController.navigationBar.hideHairline()
-        }
+//        if let navController = navigationController where !navController.navigationBar.hidden {
+//            barTop = 64
+//            
+//            navController.navigationBar.hideHairline()
+//        }
         
         let tabbarFrame = CGRect(x: 0, y: barTop, width: view.bounds.size.width, height: tabbarHidden ? 0 : tabbarHeight)
         
@@ -206,7 +206,7 @@ class RGPageViewController: UIViewController, UIPageViewControllerDataSource, UI
         
         tabScrollView.frame = tabScrollerFrame
         
-        let pagerFrame = CGRect(x: 0, y: 0, width: view.bounds.size.width, height: view.bounds.size.height)
+        let pagerFrame = CGRect(x: 0, y: CGRectGetMaxY(tabScrollerFrame), width: view.bounds.size.width, height: view.bounds.size.height)
         
         pager.view.frame = pagerFrame
     }
@@ -878,35 +878,6 @@ private class RGTabBarItem: UIView {
             textLabel?.textColor = normalColor
             imageView?.tintColor = normalColor
         }
-    }
-}
-
-// MARK: - UINavigationBar hide Hairline
-extension UINavigationBar {
-    func hideHairline() {
-        if let hairlineView: UIImageView = findHairlineImageView(containedIn: self) {
-            hairlineView.hidden = true
-        }
-    }
-    
-    func showHairline() {
-        if let hairlineView: UIImageView = findHairlineImageView(containedIn: self) {
-            hairlineView.hidden = false
-        }
-    }
-    
-    func findHairlineImageView(containedIn view: UIView) -> UIImageView? {
-        if view is UIImageView && view.bounds.size.height <= 1.0 {
-            return view as? UIImageView
-        }
-        
-        for subview in view.subviews {
-            if let imageView: UIImageView = findHairlineImageView(containedIn: subview as! UIView) {
-                return imageView
-            }
-        }
-        
-        return nil
     }
 }
 
